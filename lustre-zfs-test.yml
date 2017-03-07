@@ -1,0 +1,73 @@
+# lustre-zfs-test
+#
+# playbooks/irods-cluster.yml - Ansible playbook for configuring a test Lustre filesystem with ZFS
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+
+---
+
+- hosts: lustre-targets
+  become_user: root
+
+  tasks:
+    - name: register git repo commit id
+      local_action: shell git rev-parse HEAD
+      become: no
+      register: git_commit_id
+
+    - name: disable selinux
+      selinux: state=disabled
+
+    - name: disable firewall
+      service: name=firewalld enabled=no state=stopped
+
+    - name: "Build hosts file"
+      lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_eth1.ipv4.address }} {{item}}" state=present
+      when: hostvars[item].ansible_eth1.ipv4.address is defined
+      with_items: "{{ groups['all'] }}"
+
+    - name: necessary package groups
+      yum: name={{ item }} state=present
+      with_items:
+        - "@Development tools"
+
+    - name: necessary package repositories
+      yum: name={{ item }} state=latest
+      with_items:
+        - epel-release
+	- http://archive.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
+
+    - name: necessary packages for maangement
+      yum: name={{ item }} state=latest
+      with_items:
+        - psmisc
+        - net-tools
+        - htop
+        - iotop
+        - iftop
+
+    - name: necessary packages for lustre build
+      yum: name={{ item }} state=latest
+      with_items:
+        - xmlto
+        - asciidoc
+        - elfutils-libelf-devel
+        - zlib-devel
+        - binutils-devel
+        - newt-devel
+        - python-devel
+        - hmaccalc
+        - perl-ExtUtils-Embed
+        - bison
+        - elfutils-devel
+        - audit-libs-devel
+        - python-docutils
+        - sg3_utils
+        - expect
+        - attr
+        - lsof
+        - quilt
+        - libselinux-devel
+
+
+
+
