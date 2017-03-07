@@ -1,0 +1,10 @@
+# lustre-zfs-test
+#
+# host_vars/lustre-target0 - host configuration file for host lustre-target0
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+
+# host management setup
+ansible_connection: ssh
+ansible_host: 192.168.56.60
+ansible_user: vagrant
+ansible_ssh_private_key_file: .vagrant/machines/lustre-target0/virtualbox/private_key
