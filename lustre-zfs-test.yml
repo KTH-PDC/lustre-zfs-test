@@ -31,10 +31,10 @@
         - "@Development tools"
 
     - name: necessary package repositories
-      yum: name={{ item }} state=latest
+      yum: name={{ item }} state=present
       with_items:
         - epel-release
-	- http://archive.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
+        - http://download.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
 
     - name: necessary packages for maangement
       yum: name={{ item }} state=latest
@@ -68,6 +68,13 @@
         - quilt
         - libselinux-devel
 
+    - name: apply zfs repo patch
+      patch: src=zfs.repo.patch dest=/etc/yum.repos.d/zfs.repo
 
-
-
+    - name: lustre packages
+      yum: name={{ item }} state=latest
+      with_items:
+        - zfs
+        - libzfs2-devel
+        - kmod-spl-devel
+        - kmod-zfs-devel
