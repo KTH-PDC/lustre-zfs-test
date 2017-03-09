@@ -3,6 +3,10 @@
 # hosts-test - Ansible inventory file for the test hosts
 # Author: Ilari Korhonen, KTH Royal Institute of Technology
 
+[lustre-hosts]
+lustre-target0
+lustre-client0
+
 [lustre-targets]
 lustre-target0
 
