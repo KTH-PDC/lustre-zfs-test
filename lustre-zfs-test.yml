@@ -124,5 +124,26 @@
     - name: lustre ldev configuration
       template: src=templates/lustre-ldev.conf.j2 dest=/etc/ldev.conf owner=root group=root mode=0644
 
+    - name: create test lustre filesystem mds target
+      command: mkfs.lustre --mgs --backfstype=zfs --fsname=lustre --device-size=1048576 lustre-mgs/mgs /tmp/lustre-mgs
+      args:
+        creates: /tmp/lustre-mgs
+
+    - name: create test lustre filesystem mdt0 target
+      command: mkfs.lustre --mdt --backfstype=zfs --fsname=lustre --index=0 --mgsnode={{ lustre_target_mgs }}@tcp --device-size=1048576 lustre-mdt0/mdt0 /tmp/lustre-mdt0
+      args:
+        creates: /tmp/lustre-mdt0
+
+    - name: create test lustre filesystem ost0 target
+      command: mkfs.lustre --ost --backfstype=zfs --fsname=lustre --index=0 --mgsnode={{ lustre_target_mgs }}@tcp --device-size=1048576 lustre-ost0/ost0 /tmp/lustre-ost0
+      args:
+        creates: /tmp/lustre-ost0
+
+    - name: lustre filesystem enabled
+      systemd: name=lustre enabled=yes
+
+    - name: lustre filesystem started
+      systemd: name=lustre state=started
+
   handlers:
     - include: handlers/main.yml
