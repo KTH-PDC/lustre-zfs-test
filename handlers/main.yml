@@ -1,0 +1,11 @@
+# lustre-zfs-test
+
+# handlers/main.yml - define event handers
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+
+---
+
+  - name: reboot
+    shell: reboot
+    async: 0
+    poll: 0

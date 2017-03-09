@@ -29,14 +29,13 @@
       yum: name=kernel state=latest
       register: yum_kernel
 
-    - name: reboot machine in case of kernel upgrade
+    - name: reboot with new kernel
       shell: reboot
-      async: 0
-      poll: 0
       when: yum_kernel['changed'] == true
 
     - name: wait for rebooted machine to be available
-      local_action: wait_for_host={{ ansible_ssh_host }} state=started
+      become: no
+      local_action: wait_for host={{ ansible_nodename }} state=started delay=30 timeout=300 connect_timeout=15
       when: yum_kernel['changed'] == true
 
     - name: necessary package groups
@@ -92,6 +91,7 @@
         - libzfs2-devel
         - kmod-spl-devel
         - kmod-zfs-devel
+      notify: reboot
 
     - name: lustre build script
       template: src=templates/build-lustre-rpms.sh.j2 dest=/tmp/build-lustre-rpms.sh owner=root group=root mode=0755
@@ -116,3 +116,7 @@
         - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+      notify: reboot
+
+  handlers:
+    - include: handlers/main.yml
