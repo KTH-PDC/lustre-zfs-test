@@ -25,6 +25,13 @@
       when: hostvars[item].ansible_eth1.ipv4.address is defined
       with_items: "{{ groups['all'] }}"
 
+    - name: make sure kernel is up-to-date
+      yum: name=kernel state=latest
+      register: yum_kernel
+
+    - name: print ansible yum task results
+      debug: var=yum_kernel
+
     - name: necessary package groups
       yum: name={{ item }} state=present
       with_items:
@@ -71,10 +78,26 @@
     - name: apply zfs repo patch
       patch: src=zfs.repo.patch dest=/etc/yum.repos.d/zfs.repo
 
-    - name: lustre packages
+    - name: zfs packages
       yum: name={{ item }} state=latest
       with_items:
         - zfs
         - libzfs2-devel
         - kmod-spl-devel
         - kmod-zfs-devel
+
+    - name: get lustre version
+      shell: awk '{print $3}' /tmp/lustre-release/LUSTRE-VERSION-FILE
+      register: lustre_version
+
+    - name: lustre packages
+      yum: name={{ item }} state=present
+      with_items:
+        - /tmp/lustre-release/kmod-lustre-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/kmod-lustre-osd-zfs-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/kmod-lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/lustre-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/lustre-debuginfo-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+        - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
