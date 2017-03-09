@@ -3,4 +3,4 @@
 BUILDROOT={{ lustre_buildroot }}
 
 git clone git://git.hpdd.intel.com/fs/lustre-release.git $BUILDROOT
-(cd $BUILDROOT; sh ./autogen.sh && ./configure --disable-ldiskfs --with-linux=/usr/src/kernel/`uname -r` && make rpms)
+(cd $BUILDROOT; sh ./autogen.sh && ./configure --disable-ldiskfs --with-linux=/usr/src/kernels/`uname -r` && make rpms)
