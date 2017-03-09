@@ -93,8 +93,16 @@
         - kmod-spl-devel
         - kmod-zfs-devel
 
+    - name: lustre build script
+      template: src=templates/build-lustre-rpms.sh.j2 dest=/tmp/build-lustre-rpms.sh owner=root group=root mode=0755
+
+    - name: run lustre build script if necessary
+      shell: /tmp/build-lustre-rpms.sh
+      args:
+        creates: "{{ lustre_buildroot }}/LUSTRE-VERSION-FILE"
+
     - name: get lustre version
-      shell: awk '{print $3}' /tmp/lustre-release/LUSTRE-VERSION-FILE
+      shell: "awk '{print $3}' {{ lustre_buildroot }}/LUSTRE-VERSION-FILE"
       register: lustre_version
 
     - name: lustre packages
