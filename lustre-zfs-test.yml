@@ -29,8 +29,15 @@
       yum: name=kernel state=latest
       register: yum_kernel
 
-    - name: print ansible yum task results
-      debug: var=yum_kernel
+    - name: reboot machine in case of kernel upgrade
+      shell: reboot
+      async: 0
+      poll: 0
+      when: yum_kernel['changed'] == true
+
+    - name: wait for rebooted machine to be available
+      local_action: wait_for_host={{ ansible_ssh_host }} state=started
+      when: yum_kernel['changed'] == true
 
     - name: necessary package groups
       yum: name={{ item }} state=present
