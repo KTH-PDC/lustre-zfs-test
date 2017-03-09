@@ -118,5 +118,8 @@
         - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
       notify: reboot
 
+    - name: lnet configuration
+      template: src=templates/lustre-lnet.conf.j2 dest=/etc/modprobe.d/lnet.conf owner=root group=root mode=0644
+
   handlers:
     - include: handlers/main.yml
