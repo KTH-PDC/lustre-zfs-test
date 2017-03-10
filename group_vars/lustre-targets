@@ -1,0 +1,8 @@
+# lustre-zfs-test
+#
+# group_vars/lustre-targets - group variables for lustre target hosts
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+
+lustre_target_mgs: lustre-target0
+lustre_target_mdt0: lustre-target0
+lustre_target_ost0: lustre-target0
