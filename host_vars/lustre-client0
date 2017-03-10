@@ -1,6 +1,6 @@
-# irods-icat-provisioner
+# lustre-zfs-test
 #
-# host_vars/rodsmaster1 - host configuration file for host rodsmaster1
+# host_vars/lustre-client0 - host configuration file for host lustre-client0
 # Author: Ilari Korhonen, KTH Royal Institute of Technology
 #
 # Copyright (C) 2016-2017 KTH Royal Institute of Technology. All rights reserved.
