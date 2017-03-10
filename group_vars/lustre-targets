@@ -2,6 +2,9 @@
 #
 # group_vars/lustre-targets - group variables for lustre target hosts
 # Author: Ilari Korhonen, KTH Royal Institute of Technology
+#
+# Copyright (C) 2016-2017 KTH Royal Institute of Technology. All rights reserved.
+# See LICENSE file for more information.
 
 lustre_target_mgs: lustre-target0
 lustre_target_mdt0: lustre-target0

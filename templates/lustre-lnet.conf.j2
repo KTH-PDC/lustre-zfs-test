@@ -1,3 +1,12 @@
+# lustre-zfs-test
+#
+# templates/lustre-lnet.conf.j2 - template for lustre lnet parametrs to /etc/modprobe.d/
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+#
+# Copyright (C) 2016-2017 KTH Royal Institute of Technology. All rights reserved.
+# See LICENSE file for more information.
+
+
 # lustre lnet module configuration (lustre networking)
 options lnet networks=tcp0({{ lustre_netif }})
 
