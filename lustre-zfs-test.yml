@@ -91,7 +91,6 @@
         - libzfs2-devel
         - kmod-spl-devel
         - kmod-zfs-devel
-      notify: reboot
 
     - name: lustre build script
       template: src=templates/build-lustre-rpms.sh.j2 dest=/tmp/build-lustre-rpms.sh owner=root group=root mode=0755
@@ -116,7 +115,6 @@
         - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-      notify: reboot
 
     - name: lustre lnet configuration
       template: src=templates/lustre-lnet.conf.j2 dest=/etc/modprobe.d/lnet.conf owner=root group=root mode=0644
@@ -139,11 +137,8 @@
       args:
         creates: /tmp/lustre-ost0
 
-    - name: lustre filesystem enabled
-      systemd: name=lustre enabled=yes
-
-    - name: lustre filesystem started
-      systemd: name=lustre state=started
+    - name: lustre filesystem started and enabled (dirty workaround for ansible bug with sysv services and systemd)
+      shell: service lustre start && chkconfig lustre on
 
   handlers:
     - include: handlers/main.yml
