@@ -1,0 +1,7 @@
+# lustre-zfs-test
+#
+# group_vars/lustre-hosts - group variables for all lustre hosts
+# Author: Ilari Korhonen, KTH Royal Institute of Technology
+
+lustre_buildroot: /tmp/lustre-release
+
