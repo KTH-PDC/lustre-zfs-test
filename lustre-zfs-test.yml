@@ -8,7 +8,7 @@
 
 ---
 
-- hosts: lustre-targets
+- hosts: lustre-hosts
   become_user: root
 
   tasks:
@@ -50,7 +50,7 @@
       yum: name={{ item }} state=present
       with_items:
         - epel-release
-        - http://download.zfsonlinux.org/epel/zfs-release.el7.noarch.rpm
+        - http://download.zfsonlinux.org/epel/zfs-release.el7_4.noarch.rpm
 
     - name: necessary packages for maangement
       yum: name={{ item }} state=latest
@@ -83,9 +83,14 @@
         - lsof
         - quilt
         - libselinux-devel
+        - kernel-devel
+        - libyaml-devel
 
-    - name: apply zfs repo patch
-      patch: src=zfs.repo.patch dest=/etc/yum.repos.d/zfs.repo
+    - name: enable zfs-kmod repository
+      shell: yum-config-manager --enable zfs-kmod
+
+    - name: disable zfs-dkms repository
+      shell: yum-config-manager --disable zfs
 
     - name: zfs packages
       yum: name={{ item }} state=latest
@@ -118,6 +123,11 @@
         - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
         - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+
+- hosts: lustre-targets
+  become_user: root
+
+  tasks:
 
     - name: lustre lnet configuration
       template: src=templates/lustre-lnet.conf.j2 dest=/etc/modprobe.d/lnet.conf owner=root group=root mode=0644
