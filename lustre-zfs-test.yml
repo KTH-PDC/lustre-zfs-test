@@ -25,7 +25,7 @@
 
     - name: "Build hosts file"
       lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_eth1.ipv4.address }} {{item}}" state=present
-      when: hostvars[item].ansible_eth1.ipv4.address is defined
+      when: hostvars[item].ansible_eth1 is defined
       with_items: "{{ groups['all'] }}"
 
     - name: make sure kernel is up-to-date
@@ -42,49 +42,53 @@
       when: yum_kernel['changed'] == true
 
     - name: necessary package groups
-      yum: name={{ item }} state=present
-      with_items:
-        - "@Development tools"
+      yum:
+        name:
+          - "@Development tools"
+        state: present
 
     - name: necessary package repositories
-      yum: name={{ item }} state=present
-      with_items:
-        - epel-release
-        - http://download.zfsonlinux.org/epel/zfs-release.el7_4.noarch.rpm
+      yum:
+        name:
+          - epel-release
+          - http://download.zfsonlinux.org/epel/zfs-release.el7_6.noarch.rpm
+        state: present
 
     - name: necessary packages for maangement
-      yum: name={{ item }} state=latest
-      with_items:
-        - psmisc
-        - net-tools
-        - htop
-        - iotop
-        - iftop
+      yum:
+        name:
+          - psmisc
+          - net-tools
+          - htop
+          - iotop
+          - iftop
+        state: latest
 
     - name: necessary packages for lustre build
-      yum: name={{ item }} state=latest
-      with_items:
-        - xmlto
-        - asciidoc
-        - elfutils-libelf-devel
-        - zlib-devel
-        - binutils-devel
-        - newt-devel
-        - python-devel
-        - hmaccalc
-        - perl-ExtUtils-Embed
-        - bison
-        - elfutils-devel
-        - audit-libs-devel
-        - python-docutils
-        - sg3_utils
-        - expect
-        - attr
-        - lsof
-        - quilt
-        - libselinux-devel
-        - kernel-devel
-        - libyaml-devel
+      yum:
+        name:
+          - xmlto
+          - asciidoc
+          - elfutils-libelf-devel
+          - zlib-devel
+          - binutils-devel
+          - newt-devel
+          - python-devel
+          - hmaccalc
+          - perl-ExtUtils-Embed
+          - bison
+          - elfutils-devel
+          - audit-libs-devel
+          - python-docutils
+          - sg3_utils
+          - expect
+          - attr
+          - lsof
+          - quilt
+          - libselinux-devel
+          - kernel-devel
+          - libyaml-devel
+        state: latest
 
     - name: enable zfs-kmod repository
       shell: yum-config-manager --enable zfs-kmod
@@ -93,12 +97,13 @@
       shell: yum-config-manager --disable zfs
 
     - name: zfs packages
-      yum: name={{ item }} state=latest
-      with_items:
-        - zfs
-        - libzfs2-devel
-        - kmod-spl-devel
-        - kmod-zfs-devel
+      yum:
+        name:
+          - zfs
+          - libzfs2-devel
+          - kmod-spl-devel
+          - kmod-zfs-devel
+        state: latest
 
     - name: lustre build script
       template: src=templates/build-lustre-rpms.sh.j2 dest=/tmp/build-lustre-rpms.sh owner=root group=root mode=0755
@@ -113,16 +118,17 @@
       register: lustre_version
 
     - name: lustre packages
-      yum: name={{ item }} state=present
-      with_items:
-        - /tmp/lustre-release/kmod-lustre-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/kmod-lustre-osd-zfs-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/kmod-lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/lustre-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/lustre-debuginfo-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
-        - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.centos.x86_64.rpm
+      yum:
+        name:
+          - /tmp/lustre-release/kmod-lustre-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/kmod-lustre-osd-zfs-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/kmod-lustre-tests-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/lustre-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/lustre-debuginfo-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/lustre-iokit-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/lustre-osd-zfs-mount-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+          - /tmp/lustre-release/lustre-tests-{{ lustre_version['stdout'] }}-1.el7.x86_64.rpm
+        state: present
 
 - hosts: lustre-targets
   become_user: root
