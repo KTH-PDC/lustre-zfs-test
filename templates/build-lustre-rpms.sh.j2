@@ -11,4 +11,4 @@
 BUILDROOT={{ lustre_buildroot }}
 
 git clone git://git.whamcloud.com/fs/lustre-release.git $BUILDROOT
-(cd $BUILDROOT; git checkout tags/v2_12_0 -b v2_12_0; sh ./autogen.sh && ./configure --disable-ldiskfs --with-linux=/usr/src/kernels/`uname -r` && make rpms)
+(cd $BUILDROOT; git checkout tags/v2_12_58 -b v2_12_58; sh ./autogen.sh && ./configure --disable-ldiskfs --with-linux=/usr/src/kernels/`uname -r` && make rpms)
